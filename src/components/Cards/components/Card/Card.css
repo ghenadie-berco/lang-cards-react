@@ -8,10 +8,17 @@
 }
 
 .card-content {
-  font-size: 1rem;
+  font-size: 1.25rem;
 }
 
 .card-divider {
   height: 1px;
   background: black;
+}
+
+.delete-icon {
+  font-size: 1.5rem;
+  &:hover {
+    cursor: pointer;
+  }
 }

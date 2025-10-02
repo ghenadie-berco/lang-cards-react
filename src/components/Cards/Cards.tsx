@@ -2,7 +2,11 @@ import { Card } from "../../Interfaces";
 import "./Cards.css";
 import CardComponent from "./components/Card/Card";
 
-function Cards(props: { cards: Card[] }) {
+function Cards(props: {
+  cards: Card[];
+  onEdit: (id: number, newContent: string) => void;
+  onDelete: (id: number) => void;
+}) {
   const colors = [
     "#fff8ce", // Color 1
     "#DCFEC7", // Color 2
@@ -14,7 +18,12 @@ function Cards(props: { cards: Card[] }) {
       {props.cards.map((c, index) => {
         return (
           <li key={c.id}>
-            <CardComponent card={c} bgColor={colors[index % colors.length]}></CardComponent>
+            <CardComponent
+              card={c}
+              bgColor={colors[index % colors.length]}
+              onEdit={(newContent) => props.onEdit(c.id, newContent)}
+              onDelete={() => props.onDelete(c.id)}
+            ></CardComponent>
           </li>
         );
       })}

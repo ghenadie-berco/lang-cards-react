@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import { PlusLg, GearFill } from "react-bootstrap-icons";
 import { useEffect, useRef, useState } from "react";
 import Cards from "./components/Cards/Cards";
-import { Card } from "./Interfaces";
+import { Card, CardContent } from "./Interfaces";
 const STORAGE_KEY = "cards";
 
 function getCards(): Card[] {
@@ -53,6 +53,40 @@ function App() {
       });
   };
 
+  const deleteCard = (id: number) => {
+    setCards((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const editCard = (id: number, newContent: string) => {
+    const original = newContent;
+    const originalLang = "fr";
+    const translatedLang = "ru";
+    fetch(
+      `https://api.mymemory.translated.net/get?q=${original}&langpair=${originalLang}|${translatedLang}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const updatedCardContent: CardContent = {
+          original: original,
+          originalLang,
+          translated: data.responseData.translatedText,
+          translatedLang: translatedLang,
+        };
+        setCards((prev) => {
+          return prev.map((c) => {
+            if (c.id === id) {
+              return {
+                ...c,
+                content: updatedCardContent,
+              };
+            } else {
+              return c;
+            }
+          });
+        });
+      });
+  };
+
   useEffect(() => saveCards(cards), [cards]);
 
   return (
@@ -64,10 +98,10 @@ function App() {
           <PlusLg className="add-card-icon"></PlusLg>
           <span>Add Card</span>
         </Button>
-        <Cards cards={cards}></Cards>
+        <Cards cards={cards} onEdit={editCard} onDelete={deleteCard}></Cards>
       </section>
 
-      {/* Modal */}
+      {/* Add New Card Modal */}
       <Modal show={showModel} onHide={closeModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Add New Card</Modal.Title>
