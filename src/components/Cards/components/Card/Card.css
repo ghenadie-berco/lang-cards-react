@@ -1,0 +1,17 @@
+.card {
+  border: 1px solid black;
+}
+
+.card-lang-indicator {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.card-content {
+  font-size: 1rem;
+}
+
+.card-divider {
+  height: 1px;
+  background: black;
+}

@@ -2,7 +2,7 @@ main {
   background-color: #fff8ce;
 }
 
-section {
+.main-section {
   background-color: #fff;
   min-width: 300px;
   width: min(373px, calc(100dvw - 2rem));
@@ -16,6 +16,7 @@ section {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-height: 40px;
 }
 
 .settings-icon,
