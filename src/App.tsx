@@ -3,12 +3,26 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { PlusLg, GearFill } from "react-bootstrap-icons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Cards from "./components/Cards/Cards";
 import { Card } from "./Interfaces";
+const STORAGE_KEY = "cards";
+
+function getCards(): Card[] {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (data) {
+    return JSON.parse(data);
+  } else {
+    return [];
+  }
+}
+
+function saveCards(cards: Card[]): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+}
 
 function App() {
-  const [cards, setCards] = useState<Card[]>([]);
+  const [cards, setCards] = useState<Card[]>(getCards());
   const [showModel, setShowModel] = useState(false);
   const [newCardContent, setNewCardContent] = useState("");
   const addCardWordsInput = useRef(null);
@@ -38,6 +52,8 @@ function App() {
         setCards((prev) => [...prev, card]);
       });
   };
+
+  useEffect(() => saveCards(cards), [cards]);
 
   return (
     <main className="h-100 d-flex flex-column align-items-center p-3">
