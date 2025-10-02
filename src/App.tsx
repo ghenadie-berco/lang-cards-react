@@ -1,35 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import Button from "react-bootstrap/Button";
+import { PlusLg, GearFill } from "react-bootstrap-icons";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <main className="h-100 d-flex flex-column align-items-center p-3">
+      <h1>Lang-Cards</h1>
+      <GearFill className="settings-icon"></GearFill>
+      <section className="d-flex flex-column p-3 rounded-4">
+        <Button variant="primary" className="add-card-btn">
+          <PlusLg className="add-card-icon"></PlusLg>
+          <span>Add Card</span>
+        </Button>
+      </section>
+    </main>
+  );
 }
 
-export default App
+export default App;
