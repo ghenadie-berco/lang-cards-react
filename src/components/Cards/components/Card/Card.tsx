@@ -1,10 +1,11 @@
 import { Card } from "../../../../Interfaces";
-import { Trash3, PencilFill } from "react-bootstrap-icons";
+import { Trash3, PencilFill, Soundwave } from "react-bootstrap-icons";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import "./Card.css";
 import { useRef, useState } from "react";
+import { playContent } from "../../../../services/playContent";
 
 function CardComponent(props: {
   card: Card;
@@ -23,21 +24,35 @@ function CardComponent(props: {
     props.onEdit(cardContent);
   };
 
+  const onPlayOriginal = () => {
+    playContent(props.card.content.original, props.card.content.originalLang);
+  };
+
+  const onPlayTranslated = () => {
+    playContent(
+      props.card.content.translated,
+      props.card.content.translatedLang
+    );
+  };
+
   return (
     <div
-      className="card d-flex flex-row align-items-center gap-3 rounded-3 p-3"
+      className="card d-flex flex-row align-items-center gap-2 rounded-3 p-2"
       style={{ background: props.bgColor }}
     >
       {/* Edit Action */}
       <PencilFill className="delete-icon" onClick={showModal}></PencilFill>
       {/* Mid Section */}
-      <div className="flex-fill d-flex flex-column gap-3">
+      <div className="flex-fill d-flex flex-column gap-2">
         {/* Original Language and Content */}
         <section className="card-section d-flex flex-column">
           <span className="card-lang-indicator">
             {props.card.content.originalLang.toUpperCase()}:
           </span>
-          <span className="card-content">{props.card.content.original}</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="card-content">{props.card.content.original}</span>
+            <Soundwave className="soundwave-icon" onClick={onPlayOriginal}></Soundwave>
+          </div>
         </section>
         <div className="card-divider"></div>
         {/* Translated Language and Content */}
@@ -45,7 +60,12 @@ function CardComponent(props: {
           <span className="card-lang-indicator">
             {props.card.content.translatedLang.toUpperCase()}:
           </span>
-          <span className="card-content">{props.card.content.translated}</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="card-content">
+              {props.card.content.translated}
+            </span>
+            <Soundwave className="soundwave-icon" onClick={onPlayTranslated}></Soundwave>
+          </div>
         </section>
       </div>
       {/* Delete Action */}
