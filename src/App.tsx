@@ -2,10 +2,17 @@ import "./App.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { PlusLg, GearFill } from "react-bootstrap-icons";
+import {
+  PlusLg,
+  GearFill,
+  PauseFill,
+  PlayFill,
+  StopFill,
+} from "react-bootstrap-icons";
 import { useEffect, useRef, useState } from "react";
 import Cards from "./components/Cards/Cards";
 import { Card, CardContent } from "./Interfaces";
+import { PlaylistPlayer } from "./utilites/PlaylistPlayer";
 const STORAGE_KEY = "cards";
 
 function getCards(): Card[] {
@@ -26,6 +33,8 @@ function App() {
   const [showModel, setShowModel] = useState(false);
   const [newCardContent, setNewCardContent] = useState("");
   const addCardWordsInput = useRef(null);
+  const [isPlaylistPlaying, setIsPlaylistPlaying] = useState(false);
+  const player = useRef(new PlaylistPlayer());
 
   const closeModal = () => setShowModel(false);
   const showModal = () => setShowModel(true);
@@ -87,6 +96,26 @@ function App() {
       });
   };
 
+  const handlePlay = () => {
+    if (cards.length === 0) return;
+    player.current.play();
+    setIsPlaylistPlaying(true);
+  };
+
+  const handlePause = () => {
+    if (cards.length === 0) return;
+    player.current.pause();
+    setIsPlaylistPlaying(false);
+  };
+  const handleStop = () => player.current.stop();
+
+  useEffect(() => {
+    player.current.initialize(
+      cards.map((c) => c.content),
+      () => setIsPlaylistPlaying(false)
+    );
+  }, [cards]);
+
   useEffect(() => saveCards(cards), [cards]);
 
   return (
@@ -100,7 +129,15 @@ function App() {
         </Button>
         <Cards cards={cards} onEdit={editCard} onDelete={deleteCard}></Cards>
       </section>
-
+      {/* Playback Controls */}
+      <section className="playback-controls d-flex gap-3 mt-3">
+        {isPlaylistPlaying ? (
+          <PauseFill size={48} onClick={handlePause} />
+        ) : (
+          <PlayFill size={48} onClick={handlePlay} />
+        )}
+        <StopFill size={48} onClick={handleStop} />
+      </section>
       {/* Add New Card Modal */}
       <Modal show={showModel} onHide={closeModal} centered>
         <Modal.Header closeButton>

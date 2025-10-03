@@ -5,7 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import "./Card.css";
 import { useRef, useState } from "react";
-import { playContent } from "../../../../services/playContent";
+import { playContent } from "../../../../utilites/playContent";
 
 function CardComponent(props: {
   card: Card;
