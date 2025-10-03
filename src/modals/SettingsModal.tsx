@@ -11,17 +11,21 @@ export default function SettingsModal(props: {
   onSave: (newSettings: LangCardsSettings) => void;
 }) {
   const [translateFrom, setTranslateFrom] = useState<string>(
-    props.currentSettings.originalLang
+    props.currentSettings.originalLang.isoLang
   );
   const [translateTo, setTranslateTo] = useState<string>(
-    props.currentSettings.translatedLang
+    props.currentSettings.translatedLang.isoLang
   );
 
   const onSave = () => {
     if (translateFrom && translateTo) {
       props.onSave({
-        originalLang: translateFrom,
-        translatedLang: translateTo,
+        originalLang: LANGUAGE_OPTIONS.find(
+          (o) => o.isoLang === translateFrom
+        )!,
+        translatedLang: LANGUAGE_OPTIONS.find(
+          (o) => o.isoLang === translateTo
+        )!,
       });
     }
   };

@@ -1,4 +1,4 @@
-import { LanguageOption } from "../Interfaces";
+import { LangCardsSettings, LanguageOption } from "../Interfaces";
 
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { isoLang: "ab", label: "Abkhazian" },
@@ -185,3 +185,8 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { isoLang: "za", label: "Zhuang" },
   { isoLang: "zu", label: "Zulu" },
 ];
+
+export const DEFAULT_SETTINGS: LangCardsSettings = {
+  originalLang: LANGUAGE_OPTIONS.find((o) => o.isoLang === "fr")!,
+  translatedLang: LANGUAGE_OPTIONS.find((o) => o.isoLang === "ru")!,
+};

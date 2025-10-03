@@ -1,4 +1,5 @@
 // Interfaces
+import { DEFAULT_SETTINGS } from "../constants/language-options";
 import { Card, LangCardsSettings } from "../Interfaces";
 // Constants
 const CARDS_KEY = "cards";
@@ -20,16 +21,28 @@ export function saveCards(cards: Card[]): void {
 export function getSettings(): LangCardsSettings {
   const data = localStorage.getItem(SETTINGS_KEY);
   if (data) {
-    return JSON.parse(data);
-  } else {
-    return {
-      originalLang: "fr",
-      translatedLang: "ru",
-    };
+    const obj = JSON.parse(data);
+    if (isValidSettingsInterface(obj)) {
+      return obj;
+    }
   }
+  return DEFAULT_SETTINGS;
 }
 
 export function saveSettings(settings: LangCardsSettings): void {
-  console.log(settings);
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isValidSettingsInterface(obj: any): boolean {
+  return (
+    "originalLang" in obj &&
+    "translatedLang" in obj &&
+    typeof obj.originalLang === "object" &&
+    typeof obj.translatedLang === "object" &&
+    "isoLang" in obj.originalLang &&
+    "label" in obj.originalLang &&
+    "isoLang" in obj.translatedLang &&
+    "label" in obj.translatedLang
+  );
 }

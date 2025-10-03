@@ -41,11 +41,16 @@ export class PlaylistPlayer {
   private async _acquireWakeLock() {
     if ("wakeLock" in navigator && !this.wakeLockSentinel) {
       try {
-        this.wakeLockSentinel = await (navigator as Navigator).wakeLock.request("screen");
+        this.wakeLockSentinel = await (navigator as Navigator).wakeLock.request(
+          "screen"
+        );
         console.log("Screen Wake Lock is active.");
-      } catch (err: unknown) { // Use 'unknown' for the error type
+      } catch (err: unknown) {
+        // Use 'unknown' for the error type
         if (err instanceof Error) {
-          console.error(`Wake Lock request failed: ${err.name}, ${err.message}`);
+          console.error(
+            `Wake Lock request failed: ${err.name}, ${err.message}`
+          );
         } else {
           console.error("An unknown error occurred while acquiring wake lock.");
         }
@@ -77,13 +82,19 @@ export class PlaylistPlayer {
       const card = this.cards[this.currentIndex];
       setCurrentPlayingCard(card.id);
       try {
-        await playContent(card.content.original, card.content.originalLang);
+        await playContent(
+          card.content.original,
+          card.content.originalLang.isoLang
+        );
         if (!this.isPlaying) break;
         const d1 = this.delay(3000);
         this.currentDelayCancel = d1.cancel;
         await d1.promise;
         if (!this.isPlaying) break;
-        await playContent(card.content.translated, card.content.translatedLang);
+        await playContent(
+          card.content.translated,
+          card.content.translatedLang.isoLang
+        );
         if (!this.isPlaying) break;
         const d2 = this.delay(2000);
         this.currentDelayCancel = d2.cancel;
@@ -121,4 +132,3 @@ export class PlaylistPlayer {
     this._releaseWakeLock(); // Release the lock on stop
   }
 }
-

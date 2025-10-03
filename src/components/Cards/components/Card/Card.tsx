@@ -26,11 +26,17 @@ function CardComponent(props: {
   };
 
   const onPlayOriginal = () => {
-    playContent(props.card.content.original, props.card.content.originalLang);
+    playContent(
+      props.card.content.original,
+      props.card.content.originalLang.isoLang
+    );
   };
 
   const onPlayTranslated = () => {
-    playContent(props.card.content.translated, props.card.content.translatedLang);
+    playContent(
+      props.card.content.translated,
+      props.card.content.translatedLang.isoLang
+    );
   };
 
   return (
@@ -57,7 +63,7 @@ function CardComponent(props: {
         {/* Original Language and Content */}
         <section className="card-section d-flex flex-column">
           <span className="card-lang-indicator">
-            {props.card.content.originalLang.toUpperCase()}:
+            {props.card.content.originalLang.label}:
           </span>
           <div className="d-flex align-items-center gap-2">
             <span className="card-content">{props.card.content.original}</span>
@@ -71,7 +77,7 @@ function CardComponent(props: {
         {/* Translated Language and Content */}
         <section className="card-section d-flex flex-column">
           <span className="card-lang-indicator">
-            {props.card.content.translatedLang.toUpperCase()}:
+            {props.card.content.translatedLang.label}:
           </span>
           <div className="d-flex align-items-center gap-2">
             <span className="card-content">

@@ -6,13 +6,13 @@ export interface Card {
 export interface CardContent {
   original: string;
   translated: string;
-  originalLang: string;
-  translatedLang: string;
+  originalLang: LanguageOption;
+  translatedLang: LanguageOption;
 }
 
 export interface LangCardsSettings {
-  originalLang: string;
-  translatedLang: string;
+  originalLang: LanguageOption;
+  translatedLang: LanguageOption;
 }
 
 export interface LanguageOption {

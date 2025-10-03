@@ -46,7 +46,11 @@ export default function App() {
     const originalLang = settings.originalLang;
     const translatedLang = settings.translatedLang;
     setIsLoading(true);
-    const translated = await translate(original, originalLang, translatedLang);
+    const translated = await translate(
+      original,
+      originalLang.isoLang,
+      translatedLang.isoLang
+    );
     setIsLoading(false);
     const card: Card = {
       id: Date.now(),
@@ -65,7 +69,11 @@ export default function App() {
     const originalLang = settings.originalLang;
     const translatedLang = settings.translatedLang;
     setIsLoading(true);
-    const translated = await translate(original, originalLang, translatedLang);
+    const translated = await translate(
+      original,
+      originalLang.isoLang,
+      translatedLang.isoLang
+    );
     setIsLoading(false);
     const updatedCardContent: CardContent = {
       original: original,
