@@ -1,10 +1,11 @@
 // Interfaces
-import { Card } from "../Interfaces";
+import { Card, LangCardsSettings } from "../Interfaces";
 // Constants
-const STORAGE_KEY = "cards";
+const CARDS_KEY = "cards";
+const SETTINGS_KEY = "lang-cards-settings";
 
 export function getCards(): Card[] {
-  const data = localStorage.getItem(STORAGE_KEY);
+  const data = localStorage.getItem(CARDS_KEY);
   if (data) {
     return JSON.parse(data);
   } else {
@@ -13,5 +14,22 @@ export function getCards(): Card[] {
 }
 
 export function saveCards(cards: Card[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  localStorage.setItem(CARDS_KEY, JSON.stringify(cards));
+}
+
+export function getSettings(): LangCardsSettings {
+  const data = localStorage.getItem(SETTINGS_KEY);
+  if (data) {
+    return JSON.parse(data);
+  } else {
+    return {
+      originalLang: "en",
+      translatedLang: "fr",
+    };
+  }
+}
+
+export function saveSettings(settings: LangCardsSettings): void {
+  console.log(settings);
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 }

@@ -1,4 +1,6 @@
+// Interfaces
 import { Card } from "../Interfaces.ts";
+// Utilities
 import { playContent } from "./playContent.ts";
 
 // Define a type for the WakeLockSentinel to avoid using 'any'

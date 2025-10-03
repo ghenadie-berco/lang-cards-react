@@ -16,15 +16,23 @@ import AddCardModal from "./modals/AddCardModal";
 // Styles
 import "./App.css";
 // Interfaces
-import { Card, CardContent } from "./Interfaces";
+import { Card, CardContent, LangCardsSettings } from "./Interfaces";
 // Utilities
 import { translate } from "./utilites/translate";
 import { PlaylistPlayer } from "./utilites/PlaylistPlayer";
-import { getCards, saveCards } from "./utilites/localStorage";
+import {
+  getCards,
+  getSettings,
+  saveCards,
+  saveSettings,
+} from "./utilites/localStorage";
+import SettingsModal from "./modals/SettingsModal";
 
 export default function App() {
+  const [settings, setSettings] = useState(getSettings());
   const [cards, setCards] = useState<Card[]>(getCards());
   const [showAddCardModal, setShowAddCardModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [currentPlayingCardId, setCurrentPlayingCardId] = useState<
     number | null
   >(null);
@@ -35,8 +43,8 @@ export default function App() {
   const onAddCard = async (content: string) => {
     setShowAddCardModal(false);
     const original = content;
-    const originalLang = "fr";
-    const translatedLang = "ru";
+    const originalLang = settings.originalLang;
+    const translatedLang = settings.translatedLang;
     setIsLoading(true);
     const translated = await translate(original, originalLang, translatedLang);
     setIsLoading(false);
@@ -52,14 +60,11 @@ export default function App() {
     setCards((prev) => [...prev, card]);
   };
 
-  const deleteCard = (id: number) => {
-    setCards((prev) => prev.filter((c) => c.id !== id));
-  };
-
+  
   const editCard = async (id: number, newContent: string) => {
     const original = newContent;
-    const originalLang = "fr";
-    const translatedLang = "ru";
+    const originalLang = settings.originalLang;
+    const translatedLang = settings.translatedLang;
     setIsLoading(true);
     const translated = await translate(original, originalLang, translatedLang);
     setIsLoading(false);
@@ -82,6 +87,15 @@ export default function App() {
       });
     });
   };
+  
+  const deleteCard = (id: number) => {
+    setCards((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const onSaveSettings = (settings: LangCardsSettings) => {
+    setShowSettingsModal(false);
+    setSettings(settings);
+  }
 
   const handlePlay = () => {
     if (cards.length === 0) return;
@@ -103,13 +117,20 @@ export default function App() {
     );
   }, [cards]);
 
+  // Save Cards on changes
   useEffect(() => saveCards(cards), [cards]);
+
+  // Save Settings on changes
+  useEffect(() => saveSettings(settings), [settings]);
 
   return (
     <main className="h-100 d-flex flex-column align-items-center p-3">
       <h1>Lang-Cards</h1>
       {/* Settings Icon */}
-      <GearFill className="settings-icon"></GearFill>
+      <GearFill
+        className="settings-icon"
+        onClick={() => setShowSettingsModal(true)}
+      ></GearFill>
       {/* Main Section */}
       <section className="main-section d-flex flex-column p-3 rounded-4 gap-3 overflow-auto">
         {/* Add Card Action */}
@@ -142,12 +163,17 @@ export default function App() {
         )}
         <StopFill size={48} onClick={handleStop} />
       </section>
-      {/* Modals */}
+      {/* Add Card Modal */}
       <AddCardModal
         show={showAddCardModal}
         onCancel={() => setShowAddCardModal(false)}
         onSave={onAddCard}
       ></AddCardModal>
+      <SettingsModal
+        show={showSettingsModal}
+        onCancel={() => setShowSettingsModal(false)}
+        onSave={onSaveSettings}
+      ></SettingsModal>
     </main>
   );
 }

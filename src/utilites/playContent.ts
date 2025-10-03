@@ -1,4 +1,4 @@
-export const playContent = (content: string, language: string, rate: number = 1): Promise<void> => {
+export const playContent = (content: string, language: string, rate: number = 0.9): Promise<void> => {
   return new Promise((resolve, reject) => {
     // 1. Check if the Web Speech API is available in the browser.
     if (!('speechSynthesis' in window)) {
