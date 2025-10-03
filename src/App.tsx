@@ -1,4 +1,6 @@
-import "./App.css";
+// React
+import { useEffect, useRef, useState } from "react";
+// Bootstrap
 import Button from "react-bootstrap/Button";
 import {
   PlusLg,
@@ -8,28 +10,19 @@ import {
   StopFill,
 } from "react-bootstrap-icons";
 import Spinner from "react-bootstrap/Spinner";
-import { useEffect, useRef, useState } from "react";
+// Components
 import Cards from "./components/Cards/Cards";
+import AddCardModal from "./modals/AddCardModal";
+// Styles
+import "./App.css";
+// Interfaces
 import { Card, CardContent } from "./Interfaces";
-import { PlaylistPlayer } from "./utilites/PlaylistPlayer";
-import { AddCardModal } from "./modals/AddCardModal";
+// Utilities
 import { translate } from "./utilites/translate";
-const STORAGE_KEY = "cards";
+import { PlaylistPlayer } from "./utilites/PlaylistPlayer";
+import { getCards, saveCards } from "./utilites/localStorage";
 
-function getCards(): Card[] {
-  const data = localStorage.getItem(STORAGE_KEY);
-  if (data) {
-    return JSON.parse(data);
-  } else {
-    return [];
-  }
-}
-
-function saveCards(cards: Card[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-}
-
-function App() {
+export default function App() {
   const [cards, setCards] = useState<Card[]>(getCards());
   const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [currentPlayingCardId, setCurrentPlayingCardId] = useState<
@@ -115,8 +108,11 @@ function App() {
   return (
     <main className="h-100 d-flex flex-column align-items-center p-3">
       <h1>Lang-Cards</h1>
+      {/* Settings Icon */}
       <GearFill className="settings-icon"></GearFill>
+      {/* Main Section */}
       <section className="main-section d-flex flex-column p-3 rounded-4 gap-3 overflow-auto">
+        {/* Add Card Action */}
         <Button
           variant="primary"
           className="add-card-btn"
@@ -125,6 +121,7 @@ function App() {
           <PlusLg className="add-card-icon"></PlusLg>
           <span>Add Card</span>
         </Button>
+        {/* Cards List */}
         <Cards
           cards={cards}
           currentlyPlayingCardId={currentPlayingCardId}
@@ -136,8 +133,8 @@ function App() {
           <Spinner animation="border" variant="warning" className="spinner" />
         )}
       </section>
-      {/* Playback Controls */}
-      <section className="playback-controls d-flex gap-3 mt-3">
+      {/* Playlist Controls */}
+      <section className="playlist-controls d-flex gap-3 mt-3">
         {isPlaylistPlaying ? (
           <PauseFill size={48} onClick={handlePause} />
         ) : (
@@ -154,5 +151,3 @@ function App() {
     </main>
   );
 }
-
-export default App;

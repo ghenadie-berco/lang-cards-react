@@ -1,10 +1,14 @@
-import { Card } from "../../../../Interfaces";
+// React
+import { useState } from "react";
+// Bootstrap
 import { Trash3, PencilFill, Soundwave, PlayFill } from "react-bootstrap-icons";
-import Form from "react-bootstrap/Form";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+// Styles
 import "./Card.css";
-import { useRef, useState } from "react";
+// Components
+import EditCardModal from "./modals/EditCardModal";
+// Interfaces
+import { Card } from "../../../../Interfaces";
+// Utilities
 import { playContent } from "../../../../utilites/playContent";
 
 function CardComponent(props: {
@@ -14,15 +18,11 @@ function CardComponent(props: {
   onEdit: (newContent: string) => void;
   onDelete: () => void;
 }) {
-  const [cardContent, setCardContent] = useState(props.card.content.original);
-  const [showModel, setShowModel] = useState(false);
-  const editCardWordsInput = useRef(null);
-  const closeModal = () => setShowModel(false);
-  const showModal = () => setShowModel(true);
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  const onSave = () => {
-    closeModal();
-    props.onEdit(cardContent);
+  const onSave = (newContent: string) => {
+    setShowEditModal(false);
+    props.onEdit(newContent);
   };
 
   const onPlayOriginal = () => {
@@ -30,10 +30,7 @@ function CardComponent(props: {
   };
 
   const onPlayTranslated = () => {
-    playContent(
-      props.card.content.translated,
-      props.card.content.translatedLang
-    );
+    playContent(props.card.content.translated, props.card.content.translatedLang);
   };
 
   return (
@@ -45,9 +42,16 @@ function CardComponent(props: {
       style={{ background: props.bgColor }}
     >
       {/* Playing Indicator */}
-      <PlayFill className={"playing-indicator " + (props.currentlyPlaying ? "visible" : "")}></PlayFill>
+      <PlayFill
+        className={
+          "playing-indicator " + (props.currentlyPlaying ? "visible" : "")
+        }
+      ></PlayFill>
       {/* Edit Action */}
-      <PencilFill className="delete-icon" onClick={showModal}></PencilFill>
+      <PencilFill
+        className="delete-icon"
+        onClick={() => setShowEditModal(true)}
+      ></PencilFill>
       {/* Mid Section */}
       <div className="flex-fill d-flex flex-column gap-2">
         {/* Original Language and Content */}
@@ -83,28 +87,12 @@ function CardComponent(props: {
       {/* Delete Action */}
       <Trash3 className="delete-icon" onClick={props.onDelete}></Trash3>
       {/* Edit Card Modal */}
-      <Modal show={showModel} onHide={closeModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Card</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Control
-            ref={editCardWordsInput}
-            type="text"
-            value={cardContent}
-            placeholder="Write one or a few words..."
-            onChange={(e) => setCardContent(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={onSave}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <EditCardModal
+        show={showEditModal}
+        content={props.card.content.original}
+        onCancel={() => setShowEditModal(false)}
+        onSave={onSave}
+      ></EditCardModal>
     </div>
   );
 }

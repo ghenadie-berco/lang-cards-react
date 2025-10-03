@@ -1,6 +1,9 @@
-import { Card } from "../../Interfaces";
+// Styles
 import "./Cards.css";
+// Components
 import CardComponent from "./components/Card/Card";
+// Interfaces
+import { Card } from "../../Interfaces";
 
 function Cards(props: {
   cards: Card[];
