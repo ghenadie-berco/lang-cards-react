@@ -23,8 +23,8 @@ export function getSettings(): LangCardsSettings {
     return JSON.parse(data);
   } else {
     return {
-      originalLang: "en",
-      translatedLang: "fr",
+      originalLang: "fr",
+      translatedLang: "ru",
     };
   }
 }

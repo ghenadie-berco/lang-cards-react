@@ -60,7 +60,6 @@ export default function App() {
     setCards((prev) => [...prev, card]);
   };
 
-  
   const editCard = async (id: number, newContent: string) => {
     const original = newContent;
     const originalLang = settings.originalLang;
@@ -87,7 +86,7 @@ export default function App() {
       });
     });
   };
-  
+
   const deleteCard = (id: number) => {
     setCards((prev) => prev.filter((c) => c.id !== id));
   };
@@ -95,7 +94,7 @@ export default function App() {
   const onSaveSettings = (settings: LangCardsSettings) => {
     setShowSettingsModal(false);
     setSettings(settings);
-  }
+  };
 
   const handlePlay = () => {
     if (cards.length === 0) return;
@@ -171,6 +170,7 @@ export default function App() {
       ></AddCardModal>
       <SettingsModal
         show={showSettingsModal}
+        currentSettings={settings}
         onCancel={() => setShowSettingsModal(false)}
         onSave={onSaveSettings}
       ></SettingsModal>

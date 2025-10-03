@@ -6,11 +6,16 @@ import { useState } from "react";
 
 export default function SettingsModal(props: {
   show: boolean;
+  currentSettings: LangCardsSettings;
   onCancel: () => void;
   onSave: (newSettings: LangCardsSettings) => void;
 }) {
-  const [translateFrom, setTranslateFrom] = useState<string | undefined>();
-  const [translateTo, setTranslateTo] = useState<string | undefined>();
+  const [translateFrom, setTranslateFrom] = useState<string>(
+    props.currentSettings.originalLang
+  );
+  const [translateTo, setTranslateTo] = useState<string>(
+    props.currentSettings.translatedLang
+  );
 
   const onSave = () => {
     if (translateFrom && translateTo) {
@@ -26,35 +31,40 @@ export default function SettingsModal(props: {
       <Modal.Header closeButton>
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="d-flex flex-column gap-2">
         {/* Translate From Selection */}
-        <Form.Select
-          id="translate-from"
-          aria-label="Default select example"
-          value={translateFrom}
-          onChange={(e) => setTranslateFrom(e.target.value)}
-        >
-          <option>Translate From:</option>
-          {LANGUAGE_OPTIONS.map((l) => (
-            <option key={l.isoLang} value={l.isoLang}>
-              {l.label}
-            </option>
-          ))}
-        </Form.Select>
+        <div className="d-flex flex-column">
+          <Form.Label htmlFor="translate-from">Translate From:</Form.Label>
+          <Form.Select
+            id="translate-from"
+            aria-label="Default select example"
+            value={translateFrom}
+            onChange={(e) => setTranslateFrom(e.target.value)}
+          >
+            {LANGUAGE_OPTIONS.map((l) => (
+              <option key={l.isoLang} value={l.isoLang}>
+                {l.label}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
         {/* Translate To Selection */}
-        <Form.Select
-          id="translate-to"
-          aria-label="Default select example"
-          value={translateTo}
-          onChange={(e) => setTranslateTo(e.target.value)}
-        >
-          <option>Translate To:</option>
-          {LANGUAGE_OPTIONS.map((l) => (
-            <option key={l.isoLang} value={l.isoLang}>
-              {l.label}
-            </option>
-          ))}
-        </Form.Select>
+        <div className="d-flex flex-column">
+          <Form.Label htmlFor="translate-to">Translate To:</Form.Label>
+          <Form.Select
+            id="translate-to"
+            aria-label="Default select example"
+            value={translateTo}
+            onChange={(e) => setTranslateTo(e.target.value)}
+          >
+            <option>Translate To:</option>
+            {LANGUAGE_OPTIONS.map((l) => (
+              <option key={l.isoLang} value={l.isoLang}>
+                {l.label}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={props.onCancel}>
