@@ -92,7 +92,7 @@ function App() {
 
   const handlePlay = () => {
     if (cards.length === 0) return;
-    player.current.play(setCurrentPlayingCardId);
+    player.current.play(setCurrentPlayingCardId, true);
     setIsPlaylistPlaying(true);
   };
   const handlePause = () => {
