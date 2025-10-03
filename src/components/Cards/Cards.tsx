@@ -18,7 +18,7 @@ function Cards(props: {
     "#F2E3FF", // Color 4
   ];
   return (
-    <ul className="d-flex flex-column gap-3">
+    <ul className="list d-flex flex-column gap-3 overflow-auto">
       {props.cards.map((c, index) => {
         return (
           <li key={c.id}>

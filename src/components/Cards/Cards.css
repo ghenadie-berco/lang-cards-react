@@ -4,3 +4,7 @@ li {
   padding: 0 !important;
   margin: 0 !important;
 }
+
+.list {
+  max-height: calc(100dvh - 230px);
+}

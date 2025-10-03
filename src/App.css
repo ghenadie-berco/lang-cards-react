@@ -7,11 +7,11 @@ main {
   min-width: 300px;
   width: min(373px, calc(100dvw - 2rem));
   max-width: 373px;
-  box-shadow: 0px 5px 10px rgb(255, 255, 255);
   height: 100%;
 }
 
-.add-card-btn {
+.add-card-btn,
+.auto-generate-card-btn {
   width: 130px;
   display: flex !important;
   align-items: center;
@@ -21,7 +21,8 @@ main {
 }
 
 .settings-icon,
-.add-card-icon {
+.add-card-icon,
+.generate-card-icon {
   font-size: 1.5rem !important;
 }
 

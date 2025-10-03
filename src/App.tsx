@@ -8,6 +8,7 @@ import {
   PauseFill,
   PlayFill,
   StopFill,
+  Magic
 } from "react-bootstrap-icons";
 import Spinner from "react-bootstrap/Spinner";
 // Components
@@ -27,6 +28,7 @@ import {
   saveSettings,
 } from "./utilites/localStorage";
 import SettingsModal from "./modals/SettingsModal";
+import { generateRandomWordCard } from "./utilites/generators";
 
 export default function App() {
   const [settings, setSettings] = useState(getSettings());
@@ -99,6 +101,11 @@ export default function App() {
     setCards((prev) => prev.filter((c) => c.id !== id));
   };
 
+  const onGenerateCard = async () => {
+    const randomCard = await generateRandomWordCard(settings);
+    setCards((prev) => [...prev, randomCard]);
+  }
+
   const onSaveSettings = (settings: LangCardsSettings) => {
     setShowSettingsModal(false);
     setSettings(settings);
@@ -139,16 +146,28 @@ export default function App() {
         onClick={() => setShowSettingsModal(true)}
       ></GearFill>
       {/* Main Section */}
-      <section className="main-section d-flex flex-column p-3 rounded-4 gap-3 overflow-auto">
-        {/* Add Card Action */}
-        <Button
-          variant="primary"
-          className="add-card-btn"
-          onClick={() => setShowAddCardModal(true)}
-        >
-          <PlusLg className="add-card-icon"></PlusLg>
-          <span>Add Card</span>
-        </Button>
+      <section className="main-section d-flex flex-column p-3 rounded-4 gap-3">
+        {/* Top Actions */}
+        <div className="d-flex justify-content-between gap-2">
+          {/* Add Card Action */}
+          <Button
+            variant="primary"
+            className="add-card-btn"
+            onClick={() => setShowAddCardModal(true)}
+          >
+            <PlusLg className="add-card-icon"></PlusLg>
+            <span>Add Card</span>
+          </Button>
+          {/* Auto Generate Card Action */}
+          <Button
+            variant="success"
+            className="auto-generate-card-btn"
+            onClick={onGenerateCard}
+          >
+            <Magic className="generate-card-icon"></Magic>
+            <span>Generate</span>
+          </Button>
+        </div>
         {/* Cards List */}
         <Cards
           cards={cards}
