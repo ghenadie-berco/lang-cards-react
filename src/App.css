@@ -36,3 +36,7 @@ main {
 .playback-controls {
   margin-top: auto;
 }
+
+.spinner {
+  margin: auto;
+}

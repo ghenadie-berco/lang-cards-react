@@ -1,7 +1,5 @@
 import "./App.css";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
 import {
   PlusLg,
   GearFill,
@@ -9,10 +7,13 @@ import {
   PlayFill,
   StopFill,
 } from "react-bootstrap-icons";
+import Spinner from "react-bootstrap/Spinner";
 import { useEffect, useRef, useState } from "react";
 import Cards from "./components/Cards/Cards";
 import { Card, CardContent } from "./Interfaces";
 import { PlaylistPlayer } from "./utilites/PlaylistPlayer";
+import { AddCardModal } from "./modals/AddCardModal";
+import { translate } from "./utilites/translate";
 const STORAGE_KEY = "cards";
 
 function getCards(): Card[] {
@@ -30,89 +31,82 @@ function saveCards(cards: Card[]): void {
 
 function App() {
   const [cards, setCards] = useState<Card[]>(getCards());
-  const [showModel, setShowModel] = useState(false);
-  const [newCardContent, setNewCardContent] = useState("");
-  const addCardWordsInput = useRef(null);
+  const [showAddCardModal, setShowAddCardModal] = useState(false);
+  const [currentPlayingCardId, setCurrentPlayingCardId] = useState<
+    number | null
+  >(null);
   const [isPlaylistPlaying, setIsPlaylistPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const player = useRef(new PlaylistPlayer());
 
-  const closeModal = () => setShowModel(false);
-  const showModal = () => setShowModel(true);
-
-  const onAddCard = () => {
-    closeModal();
-    const original = newCardContent;
+  const onAddCard = async (content: string) => {
+    setShowAddCardModal(false);
+    const original = content;
     const originalLang = "fr";
     const translatedLang = "ru";
-    fetch(
-      `https://api.mymemory.translated.net/get?q=${original}&langpair=${originalLang}|${translatedLang}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const card: Card = {
-          id: Date.now(),
-          content: {
-            original: original,
-            originalLang,
-            translated: data.responseData.translatedText,
-            translatedLang: translatedLang,
-          },
-        };
-        setCards((prev) => [...prev, card]);
-      });
+    setIsLoading(true);
+    const translated = await translate(original, originalLang, translatedLang);
+    setIsLoading(false);
+    const card: Card = {
+      id: Date.now(),
+      content: {
+        original: original,
+        originalLang,
+        translated,
+        translatedLang: translatedLang,
+      },
+    };
+    setCards((prev) => [...prev, card]);
   };
 
   const deleteCard = (id: number) => {
     setCards((prev) => prev.filter((c) => c.id !== id));
   };
 
-  const editCard = (id: number, newContent: string) => {
+  const editCard = async (id: number, newContent: string) => {
     const original = newContent;
     const originalLang = "fr";
     const translatedLang = "ru";
-    fetch(
-      `https://api.mymemory.translated.net/get?q=${original}&langpair=${originalLang}|${translatedLang}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const updatedCardContent: CardContent = {
-          original: original,
-          originalLang,
-          translated: data.responseData.translatedText,
-          translatedLang: translatedLang,
-        };
-        setCards((prev) => {
-          return prev.map((c) => {
-            if (c.id === id) {
-              return {
-                ...c,
-                content: updatedCardContent,
-              };
-            } else {
-              return c;
-            }
-          });
-        });
+    setIsLoading(true);
+    const translated = await translate(original, originalLang, translatedLang);
+    setIsLoading(false);
+    const updatedCardContent: CardContent = {
+      original: original,
+      originalLang,
+      translated,
+      translatedLang: translatedLang,
+    };
+    setCards((prev) => {
+      return prev.map((c) => {
+        if (c.id === id) {
+          return {
+            ...c,
+            content: updatedCardContent,
+          };
+        } else {
+          return c;
+        }
       });
+    });
   };
 
   const handlePlay = () => {
     if (cards.length === 0) return;
-    player.current.play();
+    player.current.play(setCurrentPlayingCardId);
     setIsPlaylistPlaying(true);
   };
-
   const handlePause = () => {
     if (cards.length === 0) return;
     player.current.pause();
     setIsPlaylistPlaying(false);
   };
-  const handleStop = () => player.current.stop();
+  const handleStop = () => {
+    player.current.stop(setCurrentPlayingCardId);
+  };
 
   useEffect(() => {
-    player.current.initialize(
-      cards.map((c) => c.content),
-      () => setIsPlaylistPlaying(false)
+    player.current.initialize(cards, setCurrentPlayingCardId, () =>
+      setIsPlaylistPlaying(false)
     );
   }, [cards]);
 
@@ -123,11 +117,24 @@ function App() {
       <h1>Lang-Cards</h1>
       <GearFill className="settings-icon"></GearFill>
       <section className="main-section d-flex flex-column p-3 rounded-4 gap-3 overflow-auto">
-        <Button variant="primary" className="add-card-btn" onClick={showModal}>
+        <Button
+          variant="primary"
+          className="add-card-btn"
+          onClick={() => setShowAddCardModal(true)}
+        >
           <PlusLg className="add-card-icon"></PlusLg>
           <span>Add Card</span>
         </Button>
-        <Cards cards={cards} onEdit={editCard} onDelete={deleteCard}></Cards>
+        <Cards
+          cards={cards}
+          currentlyPlayingCardId={currentPlayingCardId}
+          onEdit={editCard}
+          onDelete={deleteCard}
+        ></Cards>
+        {/* Loading Indicator */}
+        {isLoading && (
+          <Spinner animation="border" variant="warning" className="spinner" />
+        )}
       </section>
       {/* Playback Controls */}
       <section className="playback-controls d-flex gap-3 mt-3">
@@ -138,28 +145,12 @@ function App() {
         )}
         <StopFill size={48} onClick={handleStop} />
       </section>
-      {/* Add New Card Modal */}
-      <Modal show={showModel} onHide={closeModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Add New Card</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Control
-            ref={addCardWordsInput}
-            type="text"
-            placeholder="Write one or a few words..."
-            onChange={(e) => setNewCardContent(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={onAddCard}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {/* Modals */}
+      <AddCardModal
+        show={showAddCardModal}
+        onCancel={() => setShowAddCardModal(false)}
+        onSave={onAddCard}
+      ></AddCardModal>
     </main>
   );
 }

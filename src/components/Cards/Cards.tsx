@@ -4,6 +4,7 @@ import CardComponent from "./components/Card/Card";
 
 function Cards(props: {
   cards: Card[];
+  currentlyPlayingCardId: number | null;
   onEdit: (id: number, newContent: string) => void;
   onDelete: (id: number) => void;
 }) {
@@ -20,6 +21,7 @@ function Cards(props: {
           <li key={c.id}>
             <CardComponent
               card={c}
+              currentlyPlaying={props.currentlyPlayingCardId === c.id}
               bgColor={colors[index % colors.length]}
               onEdit={(newContent) => props.onEdit(c.id, newContent)}
               onDelete={() => props.onDelete(c.id)}

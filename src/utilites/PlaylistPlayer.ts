@@ -1,27 +1,21 @@
+import { Card } from "../Interfaces.ts";
 import { playContent } from "./playContent.ts";
 
-/**
- * Interface for the content of a single card.
- */
-export interface CardContent {
-  original: string;
-  translated: string;
-  originalLang: string;
-  translatedLang: string;
-}
-
-/**
- * Manages the playback of a list of flashcards with text-to-speech.
- */
 export class PlaylistPlayer {
-  private cards: CardContent[] = [];
+  public playingCardId: number | null = null;
+
+  private cards: Card[] = [];
   private currentIndex: number = 0;
   private isPlaying: boolean = false;
   private currentDelayCancel: (() => void) | null = null;
   private onPlaybackFinish: () => void = () => {};
 
-  public initialize(cards: CardContent[], onFinish: () => void): void {
-    this.stop(false); // Stop without triggering callback
+  public initialize(
+    cards: Card[],
+    setCurrentPlayingCard: (id: number | null) => void,
+    onFinish: () => void
+  ): void {
+    this.stop(setCurrentPlayingCard);
     this.cards = cards;
     this.onPlaybackFinish = onFinish;
   }
@@ -35,19 +29,22 @@ export class PlaylistPlayer {
     return { promise, cancel };
   };
 
-  public async play(): Promise<void> {
+  public async play(
+    setCurrentPlayingCard: (id: number | null) => void
+  ): Promise<void> {
     if (this.isPlaying || this.cards.length === 0) return;
     this.isPlaying = true;
     while (this.isPlaying && this.currentIndex < this.cards.length) {
       const card = this.cards[this.currentIndex];
+      setCurrentPlayingCard(card.id);
       try {
-        await playContent(card.original, card.originalLang);
+        await playContent(card.content.original, card.content.originalLang);
         if (!this.isPlaying) break;
         const d1 = this.delay(3000);
         this.currentDelayCancel = d1.cancel;
         await d1.promise;
         if (!this.isPlaying) break;
-        await playContent(card.translated, card.translatedLang);
+        await playContent(card.content.translated, card.content.translatedLang);
         if (!this.isPlaying) break;
         const d2 = this.delay(2000);
         this.currentDelayCancel = d2.cancel;
@@ -55,11 +52,12 @@ export class PlaylistPlayer {
         this.currentIndex++;
       } catch (error) {
         console.error("Error during playback:", error);
-        this.stop();
+        this.stop(setCurrentPlayingCard);
         break;
       }
     }
-    if (this.currentIndex >= this.cards.length) this.stop();
+    if (this.currentIndex >= this.cards.length)
+      this.stop(setCurrentPlayingCard);
   }
 
   public pause(): void {
@@ -69,11 +67,12 @@ export class PlaylistPlayer {
     if (this.currentDelayCancel) this.currentDelayCancel();
   }
 
-  public stop(notify: boolean = true): void {
+  public stop(setCurrentPlayingCard: (id: number | null) => void): void {
     this.isPlaying = false;
     this.currentIndex = 0;
+    setCurrentPlayingCard(null);
     window.speechSynthesis.cancel();
     if (this.currentDelayCancel) this.currentDelayCancel();
-    if (notify) this.onPlaybackFinish();
+    if (this.onPlaybackFinish) this.onPlaybackFinish();
   }
 }

@@ -9,6 +9,7 @@ import { playContent } from "../../../../utilites/playContent";
 
 function CardComponent(props: {
   card: Card;
+  currentlyPlaying: boolean;
   bgColor: string;
   onEdit: (newContent: string) => void;
   onDelete: () => void;
@@ -37,9 +38,14 @@ function CardComponent(props: {
 
   return (
     <div
-      className="card d-flex flex-row align-items-center gap-2 rounded-3 p-2"
+      className={
+        "card d-flex flex-row align-items-center gap-2 rounded-3 p-2 " +
+        (props.currentlyPlaying ? "currently-playing" : "")
+      }
       style={{ background: props.bgColor }}
     >
+      {/* Playing Indicator */}
+      <Soundwave className={"playing-indicator " + (props.currentlyPlaying ? "visible" : "")}></Soundwave>
       {/* Edit Action */}
       <PencilFill className="delete-icon" onClick={showModal}></PencilFill>
       {/* Mid Section */}
@@ -51,7 +57,10 @@ function CardComponent(props: {
           </span>
           <div className="d-flex align-items-center gap-2">
             <span className="card-content">{props.card.content.original}</span>
-            <Soundwave className="soundwave-icon" onClick={onPlayOriginal}></Soundwave>
+            <Soundwave
+              className="soundwave-icon"
+              onClick={onPlayOriginal}
+            ></Soundwave>
           </div>
         </section>
         <div className="card-divider"></div>
@@ -64,7 +73,10 @@ function CardComponent(props: {
             <span className="card-content">
               {props.card.content.translated}
             </span>
-            <Soundwave className="soundwave-icon" onClick={onPlayTranslated}></Soundwave>
+            <Soundwave
+              className="soundwave-icon"
+              onClick={onPlayTranslated}
+            ></Soundwave>
           </div>
         </section>
       </div>
