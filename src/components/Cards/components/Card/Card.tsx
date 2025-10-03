@@ -1,5 +1,5 @@
 import { Card } from "../../../../Interfaces";
-import { Trash3, PencilFill, Soundwave } from "react-bootstrap-icons";
+import { Trash3, PencilFill, Soundwave, PlayFill } from "react-bootstrap-icons";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -45,7 +45,7 @@ function CardComponent(props: {
       style={{ background: props.bgColor }}
     >
       {/* Playing Indicator */}
-      <Soundwave className={"playing-indicator " + (props.currentlyPlaying ? "visible" : "")}></Soundwave>
+      <PlayFill className={"playing-indicator " + (props.currentlyPlaying ? "visible" : "")}></PlayFill>
       {/* Edit Action */}
       <PencilFill className="delete-icon" onClick={showModal}></PencilFill>
       {/* Mid Section */}
