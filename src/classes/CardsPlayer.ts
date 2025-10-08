@@ -1,7 +1,7 @@
 // Interfaces
 import { Card } from "../Interfaces.ts";
 // Utilities
-import { playContent } from "./playContent.ts";
+import { playContent } from "../utilites/playContent.ts";
 
 // Define a type for the WakeLockSentinel to avoid using 'any'
 interface WakeLockSentinel {
@@ -9,7 +9,7 @@ interface WakeLockSentinel {
   type: "screen";
 }
 
-export class PlaylistPlayer {
+export class CardsPlayer {
   public playingCardId: number | null = null;
 
   private cards: Card[] = [];

@@ -3,7 +3,7 @@ import { useState } from "react";
 // Bootstrap
 import { Trash3, PencilFill, Soundwave, PlayFill } from "react-bootstrap-icons";
 // Styles
-import "./Card.css";
+import "./CardItem.css";
 // Components
 import EditCardModal from "./modals/EditCardModal";
 // Interfaces
@@ -15,15 +15,9 @@ function CardComponent(props: {
   card: Card;
   currentlyPlaying: boolean;
   bgColor: string;
-  onEdit: (newContent: string) => void;
   onDelete: () => void;
 }) {
   const [showEditModal, setShowEditModal] = useState(false);
-
-  const onSave = (newContent: string) => {
-    setShowEditModal(false);
-    props.onEdit(newContent);
-  };
 
   const onPlayOriginal = () => {
     playContent(
@@ -95,9 +89,8 @@ function CardComponent(props: {
       {/* Edit Card Modal */}
       <EditCardModal
         show={showEditModal}
-        content={props.card.content.original}
-        onCancel={() => setShowEditModal(false)}
-        onSave={onSave}
+        card={props.card}
+        onClose={() => setShowEditModal(false)}
       ></EditCardModal>
     </div>
   );

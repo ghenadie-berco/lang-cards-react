@@ -1,135 +1,47 @@
 // React
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 // Bootstrap
 import Button from "react-bootstrap/Button";
-import {
-  PlusLg,
-  GearFill,
-  PauseFill,
-  PlayFill,
-  StopFill,
-  Magic
-} from "react-bootstrap-icons";
+import { PlusLg, GearFill, Magic } from "react-bootstrap-icons";
 import Spinner from "react-bootstrap/Spinner";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+// Store
+import { addNewCard, deleteCard } from "./store/slices/cards-slice";
 // Components
-import Cards from "./components/Cards/Cards";
+import CardsList from "./components/CardsList/CardsList";
 import AddCardModal from "./modals/AddCardModal";
+import SettingsModal from "./modals/SettingsModal";
 // Styles
 import "./App.css";
 // Interfaces
-import { Card, CardContent, LangCardsSettings } from "./Interfaces";
+import { AppState } from "./Interfaces";
 // Utilities
-import { translate } from "./utilites/translate";
-import { PlaylistPlayer } from "./utilites/PlaylistPlayer";
-import {
-  getCards,
-  getSettings,
-  saveCards,
-  saveSettings,
-} from "./utilites/localStorage";
-import SettingsModal from "./modals/SettingsModal";
+import { saveCards, saveSettings } from "./utilites/localStorage";
 import { generateRandomWordCard } from "./utilites/generators";
+import Player from "./components/Player/Player";
 
 export default function App() {
-  const [settings, setSettings] = useState(getSettings());
-  const [cards, setCards] = useState<Card[]>(getCards());
+  const settings = useSelector((state: AppState) => state.settings.settings);
+  const cards = useSelector((state: AppState) => state.cards.cards);
+  const dispatch = useDispatch();
   const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [currentPlayingCardId, setCurrentPlayingCardId] = useState<
     number | null
   >(null);
-  const [isPlaylistPlaying, setIsPlaylistPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const player = useRef(new PlaylistPlayer());
 
-  const onAddCard = async (content: string) => {
-    setShowAddCardModal(false);
-    const original = content;
-    const originalLang = settings.originalLang;
-    const translatedLang = settings.translatedLang;
-    setIsLoading(true);
-    const translated = await translate(
-      original,
-      originalLang.isoLang,
-      translatedLang.isoLang
-    );
-    setIsLoading(false);
-    const card: Card = {
-      id: Date.now(),
-      content: {
-        original: original,
-        originalLang,
-        translated,
-        translatedLang: translatedLang,
-      },
-    };
-    setCards((prev) => [...prev, card]);
-  };
-
-  const editCard = async (id: number, newContent: string) => {
-    const original = newContent;
-    const originalLang = settings.originalLang;
-    const translatedLang = settings.translatedLang;
-    setIsLoading(true);
-    const translated = await translate(
-      original,
-      originalLang.isoLang,
-      translatedLang.isoLang
-    );
-    setIsLoading(false);
-    const updatedCardContent: CardContent = {
-      original: original,
-      originalLang,
-      translated,
-      translatedLang: translatedLang,
-    };
-    setCards((prev) => {
-      return prev.map((c) => {
-        if (c.id === id) {
-          return {
-            ...c,
-            content: updatedCardContent,
-          };
-        } else {
-          return c;
-        }
-      });
-    });
-  };
-
-  const deleteCard = (id: number) => {
-    setCards((prev) => prev.filter((c) => c.id !== id));
+  const onDeleteCard = (id: number) => {
+    dispatch(deleteCard(id));
   };
 
   const onGenerateCard = async () => {
+    setIsLoading(true);
     const randomCard = await generateRandomWordCard(settings);
-    setCards((prev) => [...prev, randomCard]);
-  }
-
-  const onSaveSettings = (settings: LangCardsSettings) => {
-    setShowSettingsModal(false);
-    setSettings(settings);
+    setIsLoading(false);
+    dispatch(addNewCard(randomCard));
   };
-
-  const handlePlay = () => {
-    if (cards.length === 0) return;
-    player.current.play(setCurrentPlayingCardId, true);
-    setIsPlaylistPlaying(true);
-  };
-  const handlePause = () => {
-    if (cards.length === 0) return;
-    player.current.pause();
-    setIsPlaylistPlaying(false);
-  };
-  const handleStop = () => {
-    player.current.stop(setCurrentPlayingCardId);
-  };
-
-  useEffect(() => {
-    player.current.initialize(cards, setCurrentPlayingCardId, () =>
-      setIsPlaylistPlaying(false)
-    );
-  }, [cards]);
 
   // Save Cards on changes
   useEffect(() => saveCards(cards), [cards]);
@@ -169,37 +81,28 @@ export default function App() {
           </Button>
         </div>
         {/* Cards List */}
-        <Cards
+        <CardsList
           cards={cards}
           currentlyPlayingCardId={currentPlayingCardId}
-          onEdit={editCard}
-          onDelete={deleteCard}
-        ></Cards>
+          onDelete={onDeleteCard}
+        ></CardsList>
         {/* Loading Indicator */}
         {isLoading && (
           <Spinner animation="border" variant="warning" className="spinner" />
         )}
       </section>
-      {/* Playlist Controls */}
-      <section className="playlist-controls d-flex gap-3 mt-3">
-        {isPlaylistPlaying ? (
-          <PauseFill size={48} onClick={handlePause} />
-        ) : (
-          <PlayFill size={48} onClick={handlePlay} />
-        )}
-        <StopFill size={48} onClick={handleStop} />
-      </section>
+      {/* Player */}
+      <div className="player">
+        <Player setCurrentPlayingCardId={setCurrentPlayingCardId}></Player>
+      </div>
       {/* Add Card Modal */}
       <AddCardModal
         show={showAddCardModal}
-        onCancel={() => setShowAddCardModal(false)}
-        onSave={onAddCard}
+        onClose={() => setShowAddCardModal(false)}
       ></AddCardModal>
       <SettingsModal
         show={showSettingsModal}
-        currentSettings={settings}
-        onCancel={() => setShowSettingsModal(false)}
-        onSave={onSaveSettings}
+        onClose={() => setShowSettingsModal(false)}
       ></SettingsModal>
     </main>
   );

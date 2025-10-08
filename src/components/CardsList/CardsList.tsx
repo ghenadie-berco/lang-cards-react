@@ -1,14 +1,13 @@
 // Styles
-import "./Cards.css";
+import "./CardsList.css";
 // Components
-import CardComponent from "./components/Card/Card";
+import CardComponent from "./components/CardItem/CardItem";
 // Interfaces
 import { Card } from "../../Interfaces";
 
-function Cards(props: {
+function CardsList(props: {
   cards: Card[];
   currentlyPlayingCardId: number | null;
-  onEdit: (id: number, newContent: string) => void;
   onDelete: (id: number) => void;
 }) {
   const colors = [
@@ -26,7 +25,6 @@ function Cards(props: {
               card={c}
               currentlyPlaying={props.currentlyPlayingCardId === c.id}
               bgColor={colors[index % colors.length]}
-              onEdit={(newContent) => props.onEdit(c.id, newContent)}
               onDelete={() => props.onDelete(c.id)}
             ></CardComponent>
           </li>
@@ -36,4 +34,4 @@ function Cards(props: {
   );
 }
 
-export default Cards;
+export default CardsList;

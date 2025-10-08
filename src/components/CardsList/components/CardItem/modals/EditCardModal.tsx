@@ -1,30 +1,31 @@
 // React
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 // Bootstrap
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Spinner from 'react-bootstrap/Spinner';
+import Spinner from "react-bootstrap/Spinner";
 import { Button } from "react-bootstrap";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 // Store
-import { addNewCard } from "../store/slices/cards-slice";
+import { updateCard } from "../../../../../store/slices/cards-slice";
 // Interfaces
-import { AppState, Card } from "../Interfaces";
+import { AppState, Card, CardContent } from "../../../../../Interfaces";
 // Utilities
-import { translate } from "../utilites/translate";
+import { translate } from "../../../../../utilites/translate";
 
-export default function AddCardModal(props: {
+export default function EditCardModal(props: {
   show: boolean;
+  card: Card;
   onClose: () => void;
 }) {
   const settings = useSelector((state: AppState) => state.settings.settings);
   const dispatch = useDispatch();
-  const [cardContent, setCardContent] = useState("");
+  const [cardContent, setCardContent] = useState(props.card.content.original);
   const [isLoading, setIsLoading] = useState(false);
-  const addCardContentInput = useRef(null);
+  const editCardContentInput = useRef(null);
 
-  const onAddCard = async () => {
+  const onSave = async () => {
     const original = cardContent;
     const originalLang = settings.originalLang;
     const translatedLang = settings.translatedLang;
@@ -35,28 +36,26 @@ export default function AddCardModal(props: {
       translatedLang.isoLang
     );
     setIsLoading(false);
-    const card: Card = {
-      id: Date.now(),
-      content: {
-        original: original,
-        originalLang,
-        translated,
-        translatedLang: translatedLang,
-      },
+    const updatedCardContent: CardContent = {
+      original: original,
+      originalLang,
+      translated,
+      translatedLang: translatedLang,
     };
-    dispatch(addNewCard(card));
+    dispatch(updateCard({ id: props.card.id, content: updatedCardContent }));
     props.onClose();
   };
 
   return (
     <Modal show={props.show} onHide={props.onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Add New Card</Modal.Title>
+        <Modal.Title>Edit Card</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Control
-          ref={addCardContentInput}
+          ref={editCardContentInput}
           type="text"
+          value={cardContent}
           placeholder="Write one or a few words..."
           onChange={(e) => setCardContent(e.target.value)}
         />
@@ -65,9 +64,9 @@ export default function AddCardModal(props: {
         <Button variant="secondary" onClick={props.onClose} disabled={isLoading}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={onAddCard} disabled={isLoading}>
+        <Button variant="primary" onClick={() => onSave()} disabled={isLoading}>
           {isLoading && <Spinner animation="border" size="sm" />}
-          Add Card
+          Save Changes
         </Button>
       </Modal.Footer>
     </Modal>

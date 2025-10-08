@@ -1,37 +1,51 @@
+// React
+import { useState } from "react";
+// Bootstrap
 import { Button, Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import { LangCardsSettings } from "../Interfaces";
+import Spinner from "react-bootstrap/Spinner";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+// Store
+import { setSettings } from "../store/slices/settings-slice";
+// Interfaces
+import { AppState } from "../Interfaces";
+// Constants
 import { LANGUAGE_OPTIONS } from "../constants/language-options";
-import { useState } from "react";
 
 export default function SettingsModal(props: {
   show: boolean;
-  currentSettings: LangCardsSettings;
-  onCancel: () => void;
-  onSave: (newSettings: LangCardsSettings) => void;
+  onClose: () => void;
 }) {
+  const settings = useSelector((state: AppState) => state.settings.settings);
+  const dispatch = useDispatch();
   const [translateFrom, setTranslateFrom] = useState<string>(
-    props.currentSettings.originalLang.isoLang
+    settings.originalLang.isoLang
   );
   const [translateTo, setTranslateTo] = useState<string>(
-    props.currentSettings.translatedLang.isoLang
+    settings.translatedLang.isoLang
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSave = () => {
     if (translateFrom && translateTo) {
-      props.onSave({
+      const newSettings = {
         originalLang: LANGUAGE_OPTIONS.find(
           (o) => o.isoLang === translateFrom
         )!,
         translatedLang: LANGUAGE_OPTIONS.find(
           (o) => o.isoLang === translateTo
         )!,
-      });
+      };
+      setIsLoading(true);
+      dispatch(setSettings(newSettings));
+      setIsLoading(false);
+      props.onClose();
     }
   };
 
   return (
-    <Modal show={props.show} onHide={props.onCancel} centered>
+    <Modal show={props.show} onHide={props.onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>
@@ -71,14 +85,15 @@ export default function SettingsModal(props: {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.onCancel}>
+        <Button variant="secondary" onClick={props.onClose} disabled={isLoading}>
           Cancel
         </Button>
         <Button
           variant="primary"
           onClick={onSave}
-          disabled={!translateFrom || !translateTo}
+          disabled={!translateFrom || !translateTo || isLoading}
         >
+          {isLoading && <Spinner animation="border" size="sm" />}
           Save Changes
         </Button>
       </Modal.Footer>
