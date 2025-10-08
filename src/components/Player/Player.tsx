@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 // Interfaces
 import { AppState } from "../../Interfaces";
 // Classes
-import { CardsPlayer } from "../../classes/CardsPlayer";
+import { CardsPlayer } from "./classes/CardsPlayer";
 
 export default function Player(props: {
   setCurrentPlayingCardId: (id: number | null) => void;

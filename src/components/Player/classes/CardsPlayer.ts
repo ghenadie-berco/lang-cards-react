@@ -1,7 +1,7 @@
 // Interfaces
-import { Card } from "../Interfaces.ts";
+import { Card } from "../../../Interfaces.ts";
 // Utilities
-import { playContent } from "../utilites/playContent.ts";
+import { playContent } from "../../../utilites/playContent.ts";
 
 // Define a type for the WakeLockSentinel to avoid using 'any'
 interface WakeLockSentinel {
