@@ -12,6 +12,7 @@ import { addNewCard, deleteCard } from "./store/slices/cards-slice";
 import CardsList from "./components/CardsList/CardsList";
 import AddCardModal from "./modals/AddCardModal";
 import SettingsModal from "./modals/SettingsModal";
+import Player from "./components/Player/Player";
 // Styles
 import "./App.css";
 // Interfaces
@@ -19,7 +20,6 @@ import { AppState } from "./Interfaces";
 // Utilities
 import { saveCards, saveSettings } from "./utilites/localStorage";
 import { generateRandomWordCard } from "./utilites/generators";
-import Player from "./components/Player/Player";
 
 export default function App() {
   const settings = useSelector((state: AppState) => state.settings.settings);
