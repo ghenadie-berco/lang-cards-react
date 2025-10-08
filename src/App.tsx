@@ -66,7 +66,7 @@ export default function App() {
             <PlusLg className="add-card-icon"></PlusLg>
             <span>Add Card</span>
           </Button>
-          {/* Auto Generate Card Action */}
+          {/* Generate Card Action */}
           <Button
             variant="success"
             className="auto-generate-card-btn"
@@ -96,6 +96,7 @@ export default function App() {
         show={showAddCardModal}
         onClose={() => setShowAddCardModal(false)}
       ></AddCardModal>
+      {/* Settings Modal */}
       <SettingsModal
         show={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
