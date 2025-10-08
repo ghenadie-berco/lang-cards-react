@@ -25,7 +25,7 @@ import { saveCards } from "./utilites/localStorage";
 export default function App() {
   const cards = useSelector((state: AppState) => state.cards.cards);
   const dispatch = useDispatch();
-  const generateRandomWordCard = useGenerateRandomCard();
+  const generateRandomCard = useGenerateRandomCard();
   const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [currentPlayingCardId, setCurrentPlayingCardId] = useState<
@@ -37,7 +37,7 @@ export default function App() {
 
   const onGenerateCard = async () => {
     setIsLoading(true);
-    const randomCard = await generateRandomWordCard();
+    const randomCard = await generateRandomCard();
     setIsLoading(false);
     dispatch(addNewCard(randomCard));
   };
