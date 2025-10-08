@@ -18,7 +18,7 @@ import "./App.css";
 // Interfaces
 import { AppState } from "./Interfaces";
 // Utilities
-import { saveCards, saveSettings } from "./utilites/localStorage";
+import { saveCards } from "./utilites/localStorage";
 import { generateRandomWordCard } from "./utilites/generators";
 
 export default function App() {
@@ -45,9 +45,6 @@ export default function App() {
 
   // Save Cards on changes
   useEffect(() => saveCards(cards), [cards]);
-
-  // Save Settings on changes
-  useEffect(() => saveSettings(settings), [settings]);
 
   return (
     <main className="h-100 d-flex flex-column align-items-center p-3">

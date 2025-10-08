@@ -1,5 +1,5 @@
 // React
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // Bootstrap
 import { Button, Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -12,6 +12,7 @@ import { setSettings } from "../store/slices/settings-slice";
 import { AppState } from "../Interfaces";
 // Constants
 import { LANGUAGE_OPTIONS } from "../constants/language-options";
+import { saveSettings } from "../utilites/localStorage";
 
 export default function SettingsModal(props: {
   show: boolean;
@@ -43,6 +44,9 @@ export default function SettingsModal(props: {
       props.onClose();
     }
   };
+
+  // Save Settings on changes
+  useEffect(() => saveSettings(settings), [settings]);
 
   return (
     <Modal show={props.show} onHide={props.onClose} centered>
@@ -85,7 +89,11 @@ export default function SettingsModal(props: {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.onClose} disabled={isLoading}>
+        <Button
+          variant="secondary"
+          onClick={props.onClose}
+          disabled={isLoading}
+        >
           Cancel
         </Button>
         <Button
