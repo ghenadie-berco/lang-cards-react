@@ -13,18 +13,19 @@ import CardsList from "./components/CardsList/CardsList";
 import AddCardModal from "./modals/AddCardModal";
 import SettingsModal from "./modals/SettingsModal";
 import Player from "./components/Player/Player";
+// Custom Hooks
+import { useGenerateRandomCard } from "./custom hooks/useGenerateRandomCard";
 // Styles
 import "./App.css";
 // Interfaces
 import { AppState } from "./Interfaces";
 // Utilities
 import { saveCards } from "./utilites/localStorage";
-import { generateRandomWordCard } from "./utilites/generators";
 
 export default function App() {
-  const settings = useSelector((state: AppState) => state.settings.settings);
   const cards = useSelector((state: AppState) => state.cards.cards);
   const dispatch = useDispatch();
+  const generateRandomWordCard = useGenerateRandomCard();
   const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [currentPlayingCardId, setCurrentPlayingCardId] = useState<
@@ -32,13 +33,11 @@ export default function App() {
   >(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const onDeleteCard = (id: number) => {
-    dispatch(deleteCard(id));
-  };
+  const onDeleteCard = (id: number) => dispatch(deleteCard(id));
 
   const onGenerateCard = async () => {
     setIsLoading(true);
-    const randomCard = await generateRandomWordCard(settings);
+    const randomCard = await generateRandomWordCard();
     setIsLoading(false);
     dispatch(addNewCard(randomCard));
   };

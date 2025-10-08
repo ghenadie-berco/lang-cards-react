@@ -1,8 +1,21 @@
+// Redux
+import { useSelector } from "react-redux";
+// Interfaces
+import { AppState, Card, LangCardsSettings } from "../Interfaces";
+// Utilities
+import { translate } from "../utilites/translate";
+// Constants
 import { COMMON_WORDS_IN_ENGLISH } from "../constants/common-words";
-import { Card, LangCardsSettings } from "../Interfaces";
-import { translate } from "./translate";
 
-export async function generateRandomWordCard(settings: LangCardsSettings): Promise<Card> {
+export function useGenerateRandomCard(): () => Promise<Card> {
+  const settings = useSelector((state: AppState) => state.settings.settings);
+  return async () => {
+    const randomCard = await generateRandomCard(settings);
+    return randomCard;
+  };
+}
+
+async function generateRandomCard(settings: LangCardsSettings): Promise<Card> {
   const newWordInEnglish = getRandomWord();
   // Build new card
   let original = "";
